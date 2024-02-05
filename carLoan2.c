@@ -8,8 +8,7 @@
 // will add a loop later
 
 /*-----------------------------------------
-Joanna Ni carLoan.c
-cpsc 1010 section 1
+Calculates car loan affordability based on monthly income. Stops if affordable, else repeat.
 -----------------------------------------*/
 
 
