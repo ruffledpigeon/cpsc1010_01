@@ -1,8 +1,4 @@
-/* Spring 24, Lab 4
-	starter file to get started
-Joanna Ni CPSC 1011 S24 
-Section 1 Lab#4 2/13/24
- 1 1
+/*
 This program decrypts an encryped message within an array.
 */
 
