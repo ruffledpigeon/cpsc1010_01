@@ -1,5 +1,5 @@
 /*---------------------------------------
-Joanna Ni  Tues, Feb 6, 2024
+Tues, Feb 6, 2024
 1011 01  Lab#3
 
 This program serves as a car loan calculator and uses a loop in its process
