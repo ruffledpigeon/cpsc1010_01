@@ -1,8 +1,6 @@
 /*---------------------------------------
-Joanna Ni  Tues, Feb 27, 2024
-1011 01  Lab#6
-
-This program revisits the car loan calculator and adds arrays and strings to its process. 
+Lab#6
+This program revisits the car loan calculator and uses redirection from a .txt file with statements regarding affordability.
 ---------------------------------------*/
 
 #include <stdio.h>
@@ -36,7 +34,7 @@ int main () {
 */
 
 	//comment out before submission
-	//freopen("/dev/tty", "rw", stdin);
+	freopen("/dev/tty", "rw", stdin);
 
 	printf("\n\nCAR LOAN CALCULATOR\n");
 	printf("\nWhat is your monthly take-home pay?  ");
@@ -76,36 +74,16 @@ int main () {
 		else if (monthPmt <= tenPerc) {
 			printf("%s\n\n", array[2]);
 		}	
+		
 		//asking to repeat
 		printf("Would you like to try again? 0 for no, 1 for yes:  ");
 		scanf("%d", &repeatVal);
-/*
-		if (1 == repeatVal || 0 == repeatVal) {//if input is 1 or 0
-			if (1 == repeatVal) { //if user inputs 1
-				repeat = 1;
-			}
-			if (0 == repeatVal) { //if user inputs 0
-				repeat = 0;
-			}
-		}
-		else { //if repeat input invalid
-			do {
-				printf("Would you like to try again? 0 for no, 1 for yes:  ");
-				scanf("%d", &repeatVal);
-				if (1 == repeatVal) {
-					repeat = 1;
-				} //do-while input is neither 1 or 0
-			} while (!(1 == repeatVal || 0 == repeatVal));
-		}
-		*/
 
 		if (repeatVal == 1) {
 			repeat = 1;
-		}
-		else if (repeatVal == 0) {
+		} else if (repeatVal == 0) {
 			repeat = 0;
-		}
-		else {
+		} else {
 			while (!(repeatVal == 1 || repeatVal == 0)) {
 				printf("Would you like to try again? 0 for no, 1 for yes:  ");
 				scanf("%d", &repeatVal);
