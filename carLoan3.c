@@ -46,7 +46,7 @@ int main () {
 			  principalBalance = principalBalance * -1;
 		  }
 
-		  array[i][0] = principal;
+	array[i][0] = principal;
         array[i][1] = monthlyInt;
         array[i][2] = principalBalance;
 
