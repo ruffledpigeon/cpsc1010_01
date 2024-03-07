@@ -1,5 +1,5 @@
 /*---------------------------------------
-Joanna Ni  Tues, Mar 5, 2024
+Tues, Mar 5, 2024
 1011 01  Lab#7
 
 This program revisits the car loan calculator and adds separate functions to condense the main function. 
