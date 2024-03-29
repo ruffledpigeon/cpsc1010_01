@@ -1,0 +1,22 @@
+10
+Barbecue Chicken
+Grilled chicken, bacon, red onions, mozarella, barbecue sauce
+Carbonara
+Mushrooms, onion, creamy alfredo sauce
+Chicken Carbonara
+Grilled chicken, bacon, mozzarella, creamy alfredo sauce
+Ham & Cheese
+Ham, cheese, bacon
+Hawaiian
+Ham, bacon, pineapple
+Veggie Lovers
+Green peppers, roasted red peppers, onions, mushrooms
+Margheritta
+Fresh mozzarella, fresh basil, garlic, tomoatoes
+Capriciosa
+Sausage, mushrooms, roasted peppers, mozzarella
+Meat Lovers
+Pepperoni, sausage, meatballs, ham
+Three Napkins
+Pepperoni, sausage, meatballs, green peppers, onions, mushrooms
+
