@@ -1,10 +1,3 @@
-/*---------------------------------------------
-Joanna Ni 3/26/2024 
-1011 01 Lab#9
-
-init.c - initializes array that stores pizza information
----------------------------------------------*/
-
 #include "defs.h"
 #include <string.h>
 
