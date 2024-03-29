@@ -1,9 +1,3 @@
-/*------------------
-Joanna Ni CPSC 1011 01
-3/26/2024 Lab#9
-
-defs.h - contains header guard and prototypes
-------------------*/
 
 #ifndef DEFS_H
 #define DEFS_H
