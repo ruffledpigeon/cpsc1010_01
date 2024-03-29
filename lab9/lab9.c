@@ -1,10 +1,3 @@
-/*--------------------------------------------------------
-Joanna Ni 3/26/2024
-1011 01 Lab#9
-
-lab9.c - contains main function that calls functions located in other files
---------------------------------------------------------*/
-
 #include "defs.h"
 
 int main() {
