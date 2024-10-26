@@ -43,14 +43,14 @@ bool isDuplicate(char *ssn, Entry *hashTable[]) {
 }
 
 // Validation function for SSN
-bool isValidSSN(const char *ssn, int *invalidFormat, int *invalidStart, int *invalidGroupSerial) {
-    // Check for the correct format
+bool validateSSN(const char *ssn, int *rule1, int *rule3, int *rule4, int *rule5, int *rule6, int *rule7) {
+    // Rule 1: Check format XXX-XX-XXXX
     if (strlen(ssn) != 11 || ssn[3] != '-' || ssn[6] != '-') {
-        (*invalidFormat)++;
+        (*rule1)++;
         return false;
     }
 
-    // Extract the relevant parts of the SSN
+    // Extract parts of the SSN
     char area[4], group[3], serial[5];
     strncpy(area, ssn, 3);
     area[3] = '\0';
@@ -59,30 +59,53 @@ bool isValidSSN(const char *ssn, int *invalidFormat, int *invalidStart, int *inv
     strncpy(serial, ssn + 7, 4);
     serial[4] = '\0';
 
-    // Check for invalid starting numbers
-    if (strcmp(area, "000") == 0 || strcmp(area, "666") == 0 || area[0] == '9') {
-        (*invalidStart)++;
-        return false;
+    bool isValid = true;
+
+    // Rule 3: Check if it begins with '9'
+    if (area[0] == '9') {
+        (*rule3)++;
+        isValid = false;
     }
 
-    // Check for invalid group and serial numbers
-    if (strcmp(group, "00") == 0 || strcmp(serial, "0000") == 0) {
-        (*invalidGroupSerial)++;
-        return false;
+    // Rule 4: Check if it begins with '666'
+    if (strcmp(area, "666") == 0) {
+        (*rule4)++;
+        isValid = false;
     }
 
-    return true;
+    // Rule 5: Check if it begins with '000'
+    if (strcmp(area, "000") == 0) {
+        (*rule5)++;
+        isValid = false;
+    }
+
+    // Rule 6: Check if positions 4-5 are '00'
+    if (strcmp(group, "00") == 0) {
+        (*rule6)++;
+        isValid = false;
+    }
+
+    // Rule 7: Check if positions 6-9 are '0000'
+    if (strcmp(serial, "0000") == 0) {
+        (*rule7)++;
+        isValid = false;
+    }
+
+    return isValid;
 }
 
 int main(int argc, char *argv[]) {
     FILE *file;
-    char ssn[SSN_LENGTH]; // Buffer for SSN
+    char ssn[SSN_LENGTH];
     int totalCount = 0;
     int invalidCount = 0;
-    int invalidFormatCount = 0;
-    int duplicateCount = 0;
-    int invalidStartCount = 0;
-    int invalidGroupSerialCount = 0;
+    int rule1Count = 0;  // Format rule
+    int duplicateCount = 0; // Duplicate rule
+    int rule3Count = 0;  // Begins with '9'
+    int rule4Count = 0;  // Begins with '666'
+    int rule5Count = 0;  // Begins with '000'
+    int rule6Count = 0;  // Group '00'
+    int rule7Count = 0;  // Serial '0000'
 
     // Initialize hash table
     Entry *hashTable[HASH_SIZE] = {NULL};
@@ -105,15 +128,15 @@ int main(int argc, char *argv[]) {
         ssn[strcspn(ssn, "\n")] = '\0'; // Remove newline character
         totalCount++;
 
-        // Check for duplicates
+        // Rule 2: Check for duplicates
         if (isDuplicate(ssn, hashTable)) {
             duplicateCount++;
             invalidCount++;
             continue;
         }
 
-        // Validate SSN format and content
-        if (!isValidSSN(ssn, &invalidFormatCount, &invalidStartCount, &invalidGroupSerialCount)) {
+        // Check other rules
+        if (!validateSSN(ssn, &rule1Count, &rule3Count, &rule4Count, &rule5Count, &rule6Count, &rule7Count)) {
             invalidCount++;
         }
     }
@@ -132,11 +155,14 @@ int main(int argc, char *argv[]) {
 
     // Print the results
     printf("Total SSNs processed: %d\n", totalCount);
-    printf("Invalid SSNs: %d\n", invalidCount);
-    printf("Invalid format: %d\n", invalidFormatCount);
-    printf("Duplicate SSNs: %d\n", duplicateCount);
-    printf("SSNs starting with 9 or 666/000: %d\n", invalidStartCount);
-    printf("Invalid group/serial numbers: %d\n", invalidGroupSerialCount);
+    printf("Total invalid SSNs: %d\n", invalidCount);
+    printf("Rule 1 - Invalid format (XXX-XX-XXXX): %d\n", rule1Count);
+    printf("Rule 2 - Duplicate SSNs: %d\n", duplicateCount);
+    printf("Rule 3 - Begins with '9': %d\n", rule3Count);
+    printf("Rule 4 - Begins with '666': %d\n", rule4Count);
+    printf("Rule 5 - Begins with '000': %d\n", rule5Count);
+    printf("Rule 6 - Group number is '00': %d\n", rule6Count);
+    printf("Rule 7 - Serial number is '0000': %d\n", rule7Count);
 
     return 0;
 }
