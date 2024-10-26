@@ -3,13 +3,51 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define SSN_LENGTH 12 // Including the null terminator
-#define MAX_SSNS 1000000 // Maximum number of SSNs to process
+#define SSN_LENGTH 12 // Including null terminator
+#define HASH_SIZE 100003 // Hash table size for duplicate tracking
 
-bool isValidSSN(const char *ssn) {
+// Hash table entry structure
+typedef struct Entry {
+    char ssn[SSN_LENGTH];
+    struct Entry *next;
+} Entry;
+
+// Hash function for SSNs
+unsigned int hash(const char *ssn) {
+    unsigned int hash = 5381;
+    for (int i = 0; ssn[i] != '\0'; i++) {
+        hash = ((hash << 5) + hash) + ssn[i]; // hash * 33 + ssn[i]
+    }
+    return hash % HASH_SIZE;
+}
+
+// Insert SSN into hash table and return if it is a duplicate
+bool isDuplicate(char *ssn, Entry *hashTable[]) {
+    unsigned int index = hash(ssn);
+    Entry *current = hashTable[index];
+
+    while (current != NULL) {
+        if (strcmp(current->ssn, ssn) == 0) {
+            return true; // Found duplicate
+        }
+        current = current->next;
+    }
+
+    // Insert new SSN into the hash table
+    Entry *newEntry = malloc(sizeof(Entry));
+    strcpy(newEntry->ssn, ssn);
+    newEntry->next = hashTable[index];
+    hashTable[index] = newEntry;
+
+    return false;
+}
+
+// Validation function for SSN
+bool isValidSSN(const char *ssn, int *invalidFormat, int *invalidStart, int *invalidGroupSerial) {
     // Check for the correct format
     if (strlen(ssn) != 11 || ssn[3] != '-' || ssn[6] != '-') {
-        return false; // Invalid format
+        (*invalidFormat)++;
+        return false;
     }
 
     // Extract the relevant parts of the SSN
@@ -23,26 +61,31 @@ bool isValidSSN(const char *ssn) {
 
     // Check for invalid starting numbers
     if (strcmp(area, "000") == 0 || strcmp(area, "666") == 0 || area[0] == '9') {
-        return false; // Invalid area number
+        (*invalidStart)++;
+        return false;
     }
 
     // Check for invalid group and serial numbers
     if (strcmp(group, "00") == 0 || strcmp(serial, "0000") == 0) {
-        return false; // Invalid group or serial number
+        (*invalidGroupSerial)++;
+        return false;
     }
 
-    return true; // Valid SSN
+    return true;
 }
 
 int main(int argc, char *argv[]) {
     FILE *file;
     char ssn[SSN_LENGTH]; // Buffer for SSN
+    int totalCount = 0;
     int invalidCount = 0;
     int invalidFormatCount = 0;
-    int invalidDuplicateCount = 0;
+    int duplicateCount = 0;
     int invalidStartCount = 0;
     int invalidGroupSerialCount = 0;
-    bool duplicateSet[MAX_SSNS] = {false}; // To track seen SSNs
+
+    // Initialize hash table
+    Entry *hashTable[HASH_SIZE] = {NULL};
 
     // Check if a filename was provided
     if (argc < 2) {
@@ -60,37 +103,38 @@ int main(int argc, char *argv[]) {
     // Read SSNs from the file
     while (fgets(ssn, sizeof(ssn), file)) {
         ssn[strcspn(ssn, "\n")] = '\0'; // Remove newline character
+        totalCount++;
 
         // Check for duplicates
-        int index = atoi(ssn);
-        if (index < 0 || index >= MAX_SSNS || duplicateSet[index]) {
-            invalidDuplicateCount++;
+        if (isDuplicate(ssn, hashTable)) {
+            duplicateCount++;
             invalidCount++;
-            continue; // Skip further validation
+            continue;
         }
-        duplicateSet[index] = true; // Mark as seen
 
-        // Validate the SSN
-        if (!isValidSSN(ssn)) {
+        // Validate SSN format and content
+        if (!isValidSSN(ssn, &invalidFormatCount, &invalidStartCount, &invalidGroupSerialCount)) {
             invalidCount++;
-            // Increment specific counts based on failure reasons
-            if (strlen(ssn) != 11 || ssn[3] != '-' || ssn[6] != '-') {
-                invalidFormatCount++;
-            } else if (ssn[0] == '9' || strcmp(ssn, "666") == 0 || strcmp(ssn, "000") == 0) {
-                invalidStartCount++;
-            } else if (strcmp(ssn + 4, "00") == 0 || strcmp(ssn + 7, "0000") == 0) {
-                invalidGroupSerialCount++;
-            }
         }
     }
 
     fclose(file);
 
+    // Free hash table memory
+    for (int i = 0; i < HASH_SIZE; i++) {
+        Entry *current = hashTable[i];
+        while (current != NULL) {
+            Entry *next = current->next;
+            free(current);
+            current = next;
+        }
+    }
+
     // Print the results
-    printf("Total SSNs processed: %d\n", invalidCount + (int)(sizeof(duplicateSet) / sizeof(duplicateSet[0])) - invalidDuplicateCount);
+    printf("Total SSNs processed: %d\n", totalCount);
     printf("Invalid SSNs: %d\n", invalidCount);
     printf("Invalid format: %d\n", invalidFormatCount);
-    printf("Duplicate SSNs: %d\n", invalidDuplicateCount);
+    printf("Duplicate SSNs: %d\n", duplicateCount);
     printf("SSNs starting with 9 or 666/000: %d\n", invalidStartCount);
     printf("Invalid group/serial numbers: %d\n", invalidGroupSerialCount);
 
